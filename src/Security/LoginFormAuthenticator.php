@@ -3,10 +3,12 @@
 namespace App\Security;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -28,11 +30,20 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     private $urlGenerator;
     private $csrfTokenManager;
 
-    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager)
+    private $userRepository;
+    private $router;
+
+//    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager)
+//    {
+//        $this->entityManager = $entityManager;
+//        $this->urlGenerator = $urlGenerator;
+//        $this->csrfTokenManager = $csrfTokenManager;
+//    }
+
+    public function __construct(UserRepository $userRepository,RouterInterface $router)
     {
-        $this->entityManager = $entityManager;
-        $this->urlGenerator = $urlGenerator;
-        $this->csrfTokenManager = $csrfTokenManager;
+        $this->userRepository = $userRepository;
+        $this->router = $router;
     }
 
     public function supports(Request $request)
@@ -43,50 +54,59 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
     public function getCredentials(Request $request)
     {
-        $credentials = [
+//        $credentials = [
+//            'email' => $request->request->get('email'),
+//            'password' => $request->request->get('password'),
+//            'csrf_token' => $request->request->get('_csrf_token'),
+//        ];
+//        $request->getSession()->set(
+//            Security::LAST_USERNAME,
+//            $credentials['email']
+//        );
+//
+//        return $credentials;
+        return[
             'email' => $request->request->get('email'),
             'password' => $request->request->get('password'),
             'csrf_token' => $request->request->get('_csrf_token'),
         ];
-        $request->getSession()->set(
-            Security::LAST_USERNAME,
-            $credentials['email']
-        );
-
-        return $credentials;
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $token = new CsrfToken('authenticate', $credentials['csrf_token']);
-        if (!$this->csrfTokenManager->isTokenValid($token)) {
-            throw new InvalidCsrfTokenException();
-        }
-
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $credentials['email']]);
-
-        if (!$user) {
-            throw new UsernameNotFoundException('Email could not be found.');
-        }
-
-        return $user;
+        return $this->userRepository->findOneBy(['email' => $credentials['email']]);
+//        $token = new CsrfToken('authenticate', $credentials['csrf_token']);
+//        if (!$this->csrfTokenManager->isTokenValid($token)) {
+//            throw new InvalidCsrfTokenException();
+//        }
+//
+//        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $credentials['email']]);
+//
+//        if (!$user) {
+//            throw new UsernameNotFoundException('Email could not be found.');
+//        }
+//
+//        return $user;
     }
 
     public function checkCredentials($credentials, UserInterface $user)
     {
+        return true;
         // Check the user's password or other credentials and return true or false
         // If there are no credentials to check, you can just return true
-        throw new \Exception('TODO: check the credentials inside '.__FILE__);
+//        throw new \Exception('TODO: check the credentials inside '.__FILE__);
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
-            return new RedirectResponse($targetPath);
-        }
+        return new RedirectResponse($this->router->generate('app_homepage'));
 
-        // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+//        if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
+//            return new RedirectResponse($targetPath);
+//        }
+//
+//        // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
+//        throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 
     protected function getLoginUrl()
