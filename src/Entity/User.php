@@ -39,6 +39,11 @@ class User implements UserInterface
      */
     private $password;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $twitterUsername;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -130,6 +135,18 @@ class User implements UserInterface
     public function setPassword(string $password): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getTwitterUsername(): ?string
+    {
+        return $this->twitterUsername;
+    }
+
+    public function setTwitterUsername(?string $twitterUsername): self
+    {
+        $this->twitterUsername = $twitterUsername;
 
         return $this;
     }
