@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use function Symfony\Component\String\u;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -38,6 +39,11 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      */
     private $password;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $twitterUsername;
 
     public function getId(): ?int
     {
@@ -132,5 +138,28 @@ class User implements UserInterface
         $this->password = $password;
 
         return $this;
+    }
+
+    public function getTwitterUsername(): ?string
+    {
+        return $this->twitterUsername;
+    }
+
+    public function setTwitterUsername(?string $twitterUsername): self
+    {
+        $this->twitterUsername = $twitterUsername;
+
+        return $this;
+    }
+
+    public function getAvatarUrl(int $size = null): string
+    {
+        $url='https://robohash.org/'.$this->getEmail();
+
+        if ($size) {
+            $url.=sprintf('?size=%dx%d', $size, $size);
+        }
+
+        return $url;
     }
 }
