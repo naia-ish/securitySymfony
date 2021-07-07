@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use function Symfony\Component\String\u;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -149,5 +150,16 @@ class User implements UserInterface
         $this->twitterUsername = $twitterUsername;
 
         return $this;
+    }
+
+    public function getAvatarUrl(int $size = null): string
+    {
+        $url='https://robohash.org/'.$this->getEmail();
+
+        if ($size) {
+            $url.=sprintf('?size=%dx%d', $size, $size);
+        }
+
+        return $url;
     }
 }
