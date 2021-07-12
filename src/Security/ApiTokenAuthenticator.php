@@ -68,16 +68,17 @@ class ApiTokenAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        // todo
+        // API token system allow request to continue and return the json response
     }
 
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        // todo
+        // will never be called caue we chose loginform authenticator as our entrypoint
+        throw new \Exception('Not used: entypoint from other authenticator is used');
     }
 
     public function supportsRememberMe()
     {
-        // todo
+        return false;
     }
 }
