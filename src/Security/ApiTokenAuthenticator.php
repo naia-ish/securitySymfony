@@ -46,13 +46,17 @@ class ApiTokenAuthenticator extends AbstractGuardAuthenticator
             //si no hay token onAuthenticationFailure mostrará este mensaje a través de getMessageKey
         }
 
+        if ($token->isExpired()) {
+            throw new CustomUserMessageAuthenticationException('Token expired');
+        }
+
         return $token->getUserId();
         //si devuelve esto va a checkCredentials
     }
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        dd('Check credentials');
+        return true; //no tenemos que checkear password
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
