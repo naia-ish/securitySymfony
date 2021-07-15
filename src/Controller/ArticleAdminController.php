@@ -28,4 +28,12 @@ class ArticleAdminController extends AbstractController
             $article->getSlug()
         ));
     }
+
+    /**
+     * @Route("/admin/article/{id}/edit")
+     */
+    public function  edit(Article $article)
+    {
+
+    }
 }
