@@ -70,7 +70,9 @@ EOF
 
     public function getDependencies()
     {
+        //UserFixture tiene que ser lanzado antes que ArticleFixtures cuando doctrine:fixtures:load
         return [
+            UserFixture::class,
             TagFixture::class,
         ];
     }
