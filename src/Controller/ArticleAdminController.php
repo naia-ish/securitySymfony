@@ -29,13 +29,20 @@ class ArticleAdminController extends AbstractController
 
     /**
      * @Route("/admin/article/{id}/edit")
+     * @isGranted("MANAGE", subject="article")
      */
     public function  edit(Article $article)
     {
-        // podremos modificar si ROLE_ADMIN_ARTICLE or the author of that article
-        if ($article->getAuthor() !== $this->getUser() && $this->isGranted('ROLE_ADMIN_ARTICLE')) {
-            throw $this->createAccessDeniedException('No access!!');// El mensaje solo se muestra a desarrolladores
-        }
+        // 1º podremos modificar si ROLE_ADMIN_ARTICLE or the author of that article
+//        if (!$this->isGranted('MANAGE', $article)) {
+//            throw $this->createAccessDeniedException('No access!!');// El mensaje solo se muestra a desarrolladores
+//        }
+
+//       2º $this->denyAccessUnlessGranted('MANAGE', $article); EN VEZ DE ESTO
+//        SE PUEDE PONER @isGranted("MANAGE", subject="article") SUBJECT HACE REFERENCIA A
+//        public function  edit(Article $article) $article
+//       SI NO TENEMOS EL SUBJECT UTILIZAREMOS $this->denyAccessUnlessGranted('MANAGE', $article)
+
 
         dd($article);
     }
