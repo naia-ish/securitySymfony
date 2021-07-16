@@ -33,7 +33,7 @@ class ArticleAdminController extends AbstractController
     public function  edit(Article $article)
     {
         // podremos modificar si ROLE_ADMIN_ARTICLE or the author of that article
-        if ($article->getAuthor() !== $this->getUser() && $this->isGranted('ROLE_ADMIN_ARTICLE')) {
+        if (!$this->isGranted('MANAGE', $article)) {
             throw $this->createAccessDeniedException('No access!!');// El mensaje solo se muestra a desarrolladores
         }
 
